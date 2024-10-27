@@ -63,3 +63,27 @@ def login(conn):
 
     except Exception as e:
         print("Login failed:", str(e))
+
+
+def logout(conn):
+    try:
+        choice = input("Are you sure you want to log out? (y/n): ")
+
+        while choice not in ["y", "n"]:
+            print("Invalid choice. Please enter 'y' or 'n': ")
+            choice = input("Are you sure you want to log out? (y/n): ")
+
+        if choice == "y":
+            query = "UPDATE users SET status = 'out'"
+            db = conn.cursor()
+            db.execute(query)
+            conn.commit()
+
+            print("Successfully logged out")
+            input("Press Enter to continue...")
+
+            return "success"
+
+    except:
+        print("An error occurred while attempting to log out.")
+        return

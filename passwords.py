@@ -6,7 +6,7 @@ import os
 
 load_dotenv()
 
-def hash_password(password):
+def hash_password(password): 
     salt = bcrypt.gensalt()
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
 
@@ -37,6 +37,25 @@ def decrypt_password(encrypted_password):
     except Exception as e:
         print("An error occurred while decrypting the password:", str(e))
         return
+    
+
+def verify_password(service_name, password, conn):
+    try:
+        user_id = get_user_id(conn)
+
+        db = conn.cursor()
+        query = "SELECT password FROM passwords WHERE name = %s AND owner = %s"
+        values = (service_name, user_id)
+
+        db.execute(query, values)
+        result = db.fetchone()
+
+        if password == decrypt_password(result[0]):
+            return True
+
+    except:
+        print("An error occurred while verifying the password")
+        return False
 
 def add_password(conn):
     try:
@@ -55,10 +74,12 @@ def add_password(conn):
         db = conn.cursor()
         query = "INSERT INTO passwords (name, password, owner) VALUES (%s, %s, %s)"
         values = (service_name, encrypted_password, user_id)
-        print(values)
 
         db.execute(query, values)
         conn.commit()
+
+        print("\nPassword added successfully!\n")
+        input("Press enter to continue...")
 
         return "success"
 
@@ -99,15 +120,8 @@ def change_password(conn):
         user_id = get_user_id(conn)
 
         old_password = input("Enter your old password: ")
-
-        db = conn.cursor()
-        query = "SELECT password FROM passwords WHERE name = %s AND owner = %s"
-        values = (service_name, user_id)
-
-        db.execute(query, values)
-        result = db.fetchone()
-
-        if old_password == decrypt_password(result[0]):
+        
+        if verify_password(service_name, old_password, conn):
             new_password = input("Enter your new password: ")
             repeat_password = input("Repeat your new password: ")
             
@@ -138,5 +152,40 @@ def change_password(conn):
             
 
 
-def delete_password():
-    ...
+def delete_password(conn):
+    try:
+        service_name = input("Enter service name: ")
+        password = input("Enter password: ")
+
+        if verify_password(service_name, password, conn):
+            choice = input("Are you sure? (y/n): ")
+
+            while choice not in ["y", "n"]:
+                print("Invalid choice, please enter 'y' or 'n'")
+                choice = input("Are you sure? (y/n): ")
+
+            if choice == "y":
+                user_id = get_user_id(conn)
+                
+                db = conn.cursor()
+                query = "DELETE FROM passwords WHERE name = %s AND owner = %s"
+
+                values = (service_name, user_id)
+                db.execute(query, values)
+                conn.commit()
+
+                print("\nPassword deleted successfully\n")
+                input("Press Enter to continue...")
+
+                return "success"
+            
+            elif choice == "n":
+                return
+
+        else:
+            print("Incorrect password")
+            return
+
+    except:
+        print("An error occurred while deleting the password")
+        return
