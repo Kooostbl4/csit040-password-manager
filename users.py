@@ -1,6 +1,6 @@
 import mysql.connector
 import bcrypt
-from menu import start_menu
+# from menu import start_menu
 from passwords import hash_password
 
 def register(conn):
@@ -26,11 +26,8 @@ def register(conn):
         db.execute(query, values)
         conn.commit()
 
-        start_menu(conn, "logged_in")
-
     except mysql.connector.Error as err:
         print(f"Error: {err}")
-        start_menu(conn, "logged_out")
 
 
 def login(conn):
@@ -52,7 +49,9 @@ def login(conn):
             stored_hash = bytes(user[2], 'utf-8')  
 
             if bcrypt.checkpw(password.encode('utf-8'), stored_hash):
-                start_menu(conn, "logged_in")
+                print("\nSuccessfully logged in!\n")
+                return "success"
+            
             else:
                 print("Login failed: incorrect password")
 

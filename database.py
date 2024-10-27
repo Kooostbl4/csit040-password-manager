@@ -20,9 +20,8 @@ def get_user_id(conn):
         db = conn.cursor();
         db.execute("SELECT id FROM users WHERE status='in'")
         user_id = db.fetchone();
-        db.commit();
 
-        return user_id
+        return list(user_id)[0]
     
     except mysql.connector.Error as err:
         print(f"Error while getting user id: {err}")
