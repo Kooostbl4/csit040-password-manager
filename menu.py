@@ -18,6 +18,17 @@ def start_menu(conn, status="logged_out"):
 
             choice = input("Enter your choice: ")
 
+            if choice == "1":
+                status = add_password(conn)
+
+                if status == "success":
+                    print("\nPassword added successfully!\n")
+                    start_menu(conn, "logged_in")
+
+                else:
+                    print("\nFailed to add password\n")
+                    start_menu(conn, "logged_in")
+
         elif status == "logged_out":
             print("You are not logged in\n")
             print("1. Log in")
@@ -27,10 +38,18 @@ def start_menu(conn, status="logged_out"):
             choice = input("Enter your choice: ")
 
             if choice == "1":
-                login(conn)
+                status = login(conn)
+
+                if status == "success":
+                    print("\nLogged in successfully!\n")
+                    start_menu(conn, "logged_in")
 
             elif choice == "2":
-                register(conn)
+                status = register(conn)
+
+                if status == "success":
+                    print("\nRegistration successful!\n")
+                    start_menu(conn, "logged_in")
 
     except:
         print("An error occurred")
