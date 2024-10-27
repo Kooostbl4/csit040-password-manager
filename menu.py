@@ -1,7 +1,7 @@
 from users import register, login
 from passwords import *
 
-def start_menu(conn, status="logged_out"):
+def start_menu(conn, status="logged_in"):
     try:
         print("-"*100)
         print("Welcome to Password Manager!")
@@ -11,8 +11,8 @@ def start_menu(conn, status="logged_out"):
             print("What do you want to do?\n")
             print("1. Add new password")
             print("2. Look up the password")
-            print("3. Delete password")
-            print("4. Change password")
+            print("3. Change password")
+            print("4. Delete password")
             print("5. Log out")
             print("6. Exit") 
 
@@ -27,6 +27,27 @@ def start_menu(conn, status="logged_out"):
 
                 else:
                     print("\nFailed to add password\n")
+                    start_menu(conn, "logged_in")
+
+
+            elif choice == "2":
+                status = get_password(conn)
+
+                if status == "success":
+                    start_menu(conn, "logged_in")
+
+                else:
+                    print("\nFailed to find password\n")
+                    start_menu(conn, "logged_in")
+
+            elif choice == "3":
+                status = change_password(conn)
+
+                if status == "success":
+                    start_menu(conn, "logged_in")
+
+                else:
+                    print("\nFailed to change password\n")
                     start_menu(conn, "logged_in")
 
         elif status == "logged_out":

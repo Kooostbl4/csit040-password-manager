@@ -22,6 +22,9 @@ def register(conn):
 
         db = conn.cursor()
 
+
+        db.execute("UPDATE users SET status = 'out'")
+        conn.commit()
         db.execute(query, values)
         conn.commit()
 
