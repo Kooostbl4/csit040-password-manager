@@ -54,6 +54,13 @@ def login(conn):
             stored_hash = bytes(user[2], 'utf-8')  
 
             if bcrypt.checkpw(password.encode('utf-8'), stored_hash):
+
+                user_id = user[0]
+                query = "UPDATE users SET status='in' WHERE id=%s"
+                values = (user_id,)
+                db.execute(query, values)
+                conn.commit()
+
                 return "success"
             else:
                 print("Login failed: incorrect password")

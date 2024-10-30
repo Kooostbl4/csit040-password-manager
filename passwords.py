@@ -60,6 +60,26 @@ def verify_password(service_name, password, conn):
 def add_password(conn):
     try:
         service_name = input("Enter service name: ")
+
+        db = conn.cursor()
+        query = "SELECT name FROM passwords WHERE name = %s AND owner = %s"
+        values = (service_name, get_user_id(conn))
+        db.execute(query, values)
+
+        if db.rowcount > 0:
+            print("\nService name already exists for the current user.\n")
+            choice = input("\nDo you want to change this password? (y/n): ")
+
+            while choice not in ["y", "n"]:
+                print("Invalid choice, please enter 'y' or 'n'")
+                choice = input("Do you want to change this password? (y/n): ")
+
+            if choice == "y":
+                change_password(conn)
+
+            else:
+                return
+
         password = input("Enter password: ")
         repeat = input("Repeat password: ")
 
@@ -106,11 +126,14 @@ def get_password(conn):
             input("Press Enter to continue...")
 
             return "success"
+        
         else:
             print("No matching service found")
+            input("Press Enter to continue...")
 
     except:
         print("An error occurred while retrieving the password")
+        input("Press Enter to continue...")
         return
 
 

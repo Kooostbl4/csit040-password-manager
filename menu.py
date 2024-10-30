@@ -71,7 +71,7 @@ def start_menu(conn, status="logged_out"):
 
             elif choice == "6":
                 print("\nExiting...\n")
-                exit()
+                return
 
         elif status == "logged_out":
             print("You are not logged in\n")
