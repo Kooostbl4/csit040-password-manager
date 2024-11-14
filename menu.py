@@ -25,6 +25,9 @@ def start_menu(conn, status="logged_out"):
                     print("\nPassword added successfully!\n")
                     start_menu(conn, "logged_in")
 
+                elif status == "cancel":
+                    start_menu(conn, "logged_in")
+
                 else:
                     print("\nFailed to add password\n")
                     start_menu(conn, "logged_in")

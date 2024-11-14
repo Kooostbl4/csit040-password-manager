@@ -59,14 +59,18 @@ def verify_password(service_name, password, conn):
 
 def add_password(conn):
     try:
+        user_id = get_user_id(conn)
         service_name = input("Enter service name: ")
 
         db = conn.cursor()
         query = "SELECT name FROM passwords WHERE name = %s AND owner = %s"
-        values = (service_name, get_user_id(conn))
+        values = (service_name, user_id)
         db.execute(query, values)
 
-        if db.rowcount > 0:
+        existance = db.fetchone()
+        # db.commit()
+
+        if existance:
             print("\nService name already exists for the current user.\n")
             choice = input("\nDo you want to change this password? (y/n): ")
 
@@ -78,7 +82,7 @@ def add_password(conn):
                 change_password(conn)
 
             else:
-                return
+                return "cancel"
 
         password = input("Enter password: ")
         repeat = input("Repeat password: ")
@@ -89,9 +93,7 @@ def add_password(conn):
             repeat = input("Repeat password: ")
 
         encrypted_password = encrypt_password(password)
-        user_id = get_user_id(conn)
 
-        db = conn.cursor()
         query = "INSERT INTO passwords (name, password, owner) VALUES (%s, %s, %s)"
         values = (service_name, encrypted_password, user_id)
 
