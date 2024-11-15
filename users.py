@@ -1,6 +1,6 @@
 import mysql.connector
 import bcrypt
-from passwords import hash_password
+from passwords import hash_password, generate_strong_password, make_stronger_password, check_passwords
 
 def register(conn):
     print("Register:")
@@ -15,19 +15,40 @@ def register(conn):
             password = input("Enter your password: ")
             password_confirmation = input("Repeat your password ")
 
+        if not check_passwords(password):
+            print("\nYour password is too weak. There must have at least:\n8 characters\n1 capital letter\n1 digit\n1 special character\n")
+            print("1. Randomly generate strong password")
+            print("2. Make your password stronger autimatically")
+
+            choice = input("Enter your choice: ")
+
+            while choice not in ["1", "2"]:
+                print("Invalid choice, please enter 1 or 2")
+                choice = input("Enter your choice: ")
+
+            if choice == "1":
+                password = generate_strong_password()
+
+                print(f"Your password is {password}")
+
+            elif choice == "2":
+                password = make_stronger_password(password)
+
+                print(f"Your password is {password}")
+            
+
         hashed_password = hash_password(password)
+
+        db = conn.cursor()
+        db.execute("UPDATE users SET status = 'out'")
+        conn.commit()
 
         query = "INSERT INTO users (username, password, status) VALUES (%s, %s, %s)"
         values = (username, hashed_password, "in")
 
-        db = conn.cursor()
-
-
-        db.execute("UPDATE users SET status = 'out'")
-        conn.commit()
         db.execute(query, values)
         conn.commit()
-
+        db = conn.cursor()
         return "success"
 
     except mysql.connector.Error as err:

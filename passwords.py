@@ -142,9 +142,6 @@ def make_stronger_password(password):
     
     return ''.join(stronger_password)
 
-# Example usage
-print(make_stronger_password("d3stroy"))  # Outputs a stronger version with at least 10 characters
-
 
 def add_password(conn):
     try:
