@@ -77,6 +77,9 @@ def login(conn):
             if bcrypt.checkpw(password.encode('utf-8'), stored_hash):
 
                 user_id = user[0]
+                db.execute("UPDATE users SET status = 'out'")
+                conn.commit()   
+                
                 query = "UPDATE users SET status='in' WHERE id=%s"
                 values = (user_id,)
                 db.execute(query, values)

@@ -350,3 +350,26 @@ def delete_password(conn):
     except:
         print("An error occurred while deleting the password")
         return
+
+def all_passwords(conn):
+    try:
+        user_id = get_user_id(conn)
+
+        db = conn.cursor()
+        query = "SELECT name, password FROM passwords WHERE owner = %s"
+        values = (user_id,)
+        db.execute(query, values)
+
+        passwords = list(db.fetchall())
+        # print(passwords)
+        print()
+        for password in passwords:
+            print(f"{password[0]: <20} {decrypt_password(password[1]): >40}")
+
+        input("\nPress Enter to continue...")
+
+        return "success"
+
+    except:
+        print("An error occured while getting all passwords")
+        return

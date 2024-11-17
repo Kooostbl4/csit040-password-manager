@@ -13,10 +13,15 @@ def start_menu(conn, status="logged_out"):
             print("2. Look up the password")
             print("3. Change password")
             print("4. Delete password")
-            print("5. Log out")
-            print("6. Exit") 
+            print("5. List of your passwords")
+            print("6. Log out")
+            print("7. Exit") 
 
             choice = input("Enter your choice: ")
+
+            while choice not in ["1", "2", "3", "4", "5", "6", "7"]:
+                print("Invalid choice, please enter 1-7")
+                choice = input("Enter your choice: ")
 
             if choice == "1":
                 status = add_password(conn)
@@ -63,6 +68,16 @@ def start_menu(conn, status="logged_out"):
                     start_menu(conn, "logged_in")
 
             elif choice == "5":
+                status = all_passwords(conn)
+
+                if status == "success":
+                    start_menu(conn, "logged_in")
+
+                else:
+                    print("\nFailed to get the list of passwords\n")
+                    start_menu(conn, "logged_in")
+
+            elif choice == "6":
                 status = logout(conn)
 
                 if status == "success":
@@ -72,7 +87,7 @@ def start_menu(conn, status="logged_out"):
                 else:
                     start_menu(conn, "logged_in")
 
-            elif choice == "6":
+            elif choice == "7":
                 print("\nExiting...\n")
                 return
 
@@ -83,6 +98,10 @@ def start_menu(conn, status="logged_out"):
             print("3. Exit")
 
             choice = input("Enter your choice: ")
+
+            while choice not in ["1", "2", "3", "4", "5", "6"]:
+                print("Invalid choice, please enter 1-3")
+                choice = input("Enter your choice: ")
 
             if choice == "1":
                 status = login(conn)
@@ -97,6 +116,10 @@ def start_menu(conn, status="logged_out"):
                 if status == "success":
                     print("\nRegistration successful!\n")
                     start_menu(conn, "logged_in")
+
+            elif choice == "3":
+                print("\nExiting...\n")
+                return
 
     except:
         print("An error occurred")
